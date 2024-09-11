@@ -165,5 +165,4 @@ best_model_state.bin
 *.csv
 *.qmd
 .quarto/
-*.py
 *.html
