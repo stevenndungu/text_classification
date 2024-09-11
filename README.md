@@ -7,12 +7,6 @@ This repository contains a **Streamlit app** for sentiment analysis on movie rev
 - **Streamlit Deployment**: The app is built with Streamlit, allowing for a simple and interactive UI.
 - **BERT Model**: The sentiment classifier is fine-tuned using the `bert-base-cased` model from Hugging Face.
 
-## Files
-- `app.py`: The main Streamlit app script for deployment.
-- `best_model_state.bin`: The pre-trained BERT model's saved state.
-- `requirements.txt`: The dependencies required to run the app.
-- `README.md`: This documentation file.
-
 ## Setup and Installation
 
 1. Clone the repository:
@@ -25,7 +19,7 @@ This repository contains a **Streamlit app** for sentiment analysis on movie rev
    
 3. Create a virtual environment and activate it:
 	```bash
-	python3 -m venv venv
+	python -m venv venv
 	source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 	
 4. Install the required packages:
@@ -34,7 +28,7 @@ This repository contains a **Streamlit app** for sentiment analysis on movie rev
 	
 5. Make sure the pre-trained model (best_model_state.bin) is in the same directory as app.py. If not, download and place it there.
 
-6. Run the Streamlit app:
+6. Run the Streamlit app :
 	```bash
 	streamlit run app.py
 
