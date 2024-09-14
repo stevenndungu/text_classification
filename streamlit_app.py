@@ -1,37 +1,56 @@
 #%%
 import streamlit as st
-from utils import *
+from utils_v4 import *
 import torch
-from transformers import BertTokenizer
+
 import pandas as pd
 
-# Function to predict sentiment
+with open('vocab_v4.pkl', 'rb') as f:
+    vocab = pickle.load(f)
+max_len=401
+# Initialize the model and load the saved state
+config = TransformerConfig(
+          vocab_size=len(vocab),
+          hidden_size=256,
+          num_attention_heads=8,
+          num_hidden_layers=8,
+          intermediate_size=512,
+          hidden_dropout_prob=0.1,
+          max_position_embeddings=401,
+          num_labels=2,
+          activation_function='gelu'
+      )
+
+# Tokenize and convert the review to input IDs
+def preprocess_review(review_text, vocab, max_len):
+    # Tokenize the review text
+    tokens = review_text.lower()
+    tokens = re.sub(r'[^a-zA-Z\s]', '', tokens).split()  # Basic tokenization
+    # Convert tokens to IDs using the vocabulary
+    token_ids = [vocab.get(token, vocab['<UNK>']) for token in tokens]
+    # Pad or truncate to max_len
+    if len(token_ids) < max_len:
+        token_ids += [vocab['<PAD>']] * (max_len - len(token_ids))  # Padding
+    else:
+        token_ids = token_ids[:max_len] 
+    return torch.tensor([token_ids]).to(device)  
+
+# Predict the sentiment of a review
 def predict_sentiment(review_text):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-    encoded_review = tokenizer.encode_plus(
-        review_text,
-        max_length=160,
-        add_special_tokens=True,
-        return_token_type_ids=False,
-        pad_to_max_length=True,
-        return_attention_mask=True,
-        return_tensors='pt',
-        truncation=True
-    )
+    # Preprocess the review
+    input_ids = preprocess_review(review_text, vocab, max_len)
     
-    input_ids = encoded_review['input_ids']
-    attention_mask = encoded_review['attention_mask']
+    # Make prediction
+    with torch.no_grad():
+        logits = model(input_ids)
+        probabilities = torch.softmax(logits, dim=1)
+        _, prediction = torch.max(probabilities, dim=1)
     
-    # Get the model's prediction
-    outputs = model(input_ids, attention_mask)
-    probs = torch.nn.functional.softmax(outputs, dim=1)
-    _, prediction = torch.max(probs, dim=1)
-    
-    return int(prediction), probs
+    return int(prediction), probabilities
 
 # Main block
 if __name__ == '__main__':
-    
+        
     # Load data
     df = pd.read_csv('IMDB Dataset.csv')
     df['sentiment'] = df['sentiment'].apply(lambda x: 1 if x == 'positive' else 0)
@@ -44,10 +63,13 @@ if __name__ == '__main__':
     # Concatenate positive and negative reviews to create a balanced dataset of 50 reviews
     df = pd.concat([positive_reviews, negative_reviews]).sample(frac=1, random_state=42)
 
-    # Initialize the model and load the saved state
-    class_names = ['negative', 'positive']
-    model = TextClassifier(len(class_names))
-    model.load_state_dict(torch.load('best_model_state.bin', map_location=torch.device('cpu')))
+    # - vocab: the vocabulary used for tokenizing text
+    # - max_len: the maximum length of the tokenized review
+    # - class_names: list of class names (e.g., ['negative', 'positive'])
+    # - model: the trained Transformer model
+
+    model = TransformerForSequenceClassification(config).to(device)
+    model.load_state_dict(torch.load('best_model.pth', map_location=torch.device('cpu')))
     model = model.eval()
 
     # Streamlit app UI
@@ -62,6 +84,7 @@ if __name__ == '__main__':
         if selected_review:
             # Make a prediction
             prediction, probabilities = predict_sentiment(selected_review)
+            #prediction, probabilities = predict_sentiment(df.review[38388])
 
             # Get the class label
             class_names = ['Negative', 'Positive']
@@ -71,3 +94,7 @@ if __name__ == '__main__':
             st.write(f"**Selected Review:** {selected_review}")
             st.write(f"**Predicted Sentiment:** {sentiment}")
             st.write(f"**Confidence:** {probabilities[0][prediction].item() * 100:.2f}%")
+
+
+#        streamlit run app.py
+
