@@ -1,17 +1,17 @@
 # Movie Review Sentiment Analysis with BERT
 
-This repository contains a **Streamlit app** for sentiment analysis on movie reviews using a fine-tuned BERT model. The app predicts whether a given review has a **positive** or **negative** sentiment based on the IMDb movie reviews dataset.
+This repository contains a **Streamlit app** for sentiment analysis on movie reviews based on a Transformer model. The app predicts whether a given review has a **positive** or **negative** sentiment based on the IMDb movie reviews dataset.
 
 ## Features
 - **Interactive Sentiment Prediction**: Users can input a movie review or select a pre-existing review from the dataset, and the app will predict whether the sentiment is positive or negative.
 - **Streamlit Deployment**: The app is built with Streamlit, allowing for a simple and interactive UI.
-- **BERT Model**: The sentiment classifier is fine-tuned using the `bert-base-cased` model from Hugging Face.
+
 
 ## Setup and Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/stevenndungu/text_classification.git
    
 2. Change into the project directory:
 	 ```bash
@@ -30,5 +30,5 @@ This repository contains a **Streamlit app** for sentiment analysis on movie rev
 
 6. Run the Streamlit app :
 	```bash
-	streamlit run app.py
+	streamlit run streamlit_app.py
 
