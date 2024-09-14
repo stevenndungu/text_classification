@@ -1,11 +1,11 @@
 #%%
 import streamlit as st
-from utils_v4 import *
+from utils import *
 import torch
 
 import pandas as pd
 
-with open('vocab_v4.pkl', 'rb') as f:
+with open('vocab.pkl', 'rb') as f:
     vocab = pickle.load(f)
 max_len=401
 # Initialize the model and load the saved state
@@ -96,5 +96,5 @@ if __name__ == '__main__':
             st.write(f"**Confidence:** {probabilities[0][prediction].item() * 100:.2f}%")
 
 
-#        streamlit run app.py
+#        streamlit run streamlit_app.py
 
