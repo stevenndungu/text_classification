@@ -1,7 +1,6 @@
 torch
-transformers
 streamlit
-pickle5
+pickle
 pandas
 numpy
 seaborn
