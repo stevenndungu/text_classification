@@ -1,9 +1,9 @@
 torch
 transformers
 streamlit
+pickle
 pandas
 numpy
 seaborn
 matplotlib
 scikit-learn
-pickle
