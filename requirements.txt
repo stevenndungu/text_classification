@@ -1,6 +1,6 @@
 torch
 streamlit
-pickle
+pickle-mixin
 pandas
 numpy
 seaborn
